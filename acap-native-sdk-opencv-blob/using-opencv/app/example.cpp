@@ -18,7 +18,7 @@
 #include <syslog.h>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/video.hpp>
-#include "opencv2/opencv.hpp"
+#include <opencv2/features2d.hpp>
 
 #include "imgprovider.h"
 
@@ -142,7 +142,7 @@ int main(int argc, char* argv[]) {
     int nonzero_pixels = countNonZero(fg);
     if (nonzero_pixels > 0) {
       syslog(LOG_INFO, "Motion detected: YES");
-        syslog(LOG_INFO, "keypoints", keypoints[0]);   
+//        syslog(LOG_INFO, "keypoints", keypoints[0]);   
     } else {
       syslog(LOG_INFO, "Motion detected: NO");
     }

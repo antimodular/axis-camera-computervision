@@ -73,7 +73,7 @@ RUN COMMON_CMAKE_FLAGS="-D CMAKE_BUILD_TYPE=RELEASE \
         -D WITH_FFMPEG=OFF \
         -D WITH_GSTREAMER=OFF \
         -D WITH_GSTREAMER_0_10=OFF \
-        -D BUILD_LIST=core,imgproc,video \
+        -D BUILD_LIST=core,imgproc,video,features2d,objdetect \
         -D BUILD_EXAMPLES=OFF \
         -D BUILD_OPENCV_APPS=OFF \
         -D BUILD_DOCS=OFF \
