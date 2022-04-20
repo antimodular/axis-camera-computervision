@@ -1,5 +1,15 @@
 ## Setup the camera
 
+Enable SSH on your camera by navigating to **System -> plain config -> network -> enable ssh** via the camera's web interface.
+Ensure to scroll all the wat down and click on the **save button**.
+
+If you have not down yet install docker on your computer get it from here: https://docs.docker.com/desktop/mac/install/
+You can verify that it works executing `docker -v` which shoudl return something like `Docker version 20.10.14, build a224086`
+
+### Check if camera is docker enabled.
+Models that do not work are:
+- M3115-LVE
+- P3245-LVE`
 Make sure that the camera has docker installed: https://github.com/AxisCommunications/docker-acap
 
 ### Disable TLS and enable SD card for docker:

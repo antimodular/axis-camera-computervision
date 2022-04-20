@@ -1,0 +1,39 @@
+name: Build vdo-larod applications
+on:
+  push:
+    paths:
+      - 'vdo-larod/**'
+      - '!vdo-larod/README.md'
+      - '.github/workflows/vdo-larod.yml'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - arch: armv7hf
+            chip: cpu
+          - arch: armv7hf
+            chip: edgetpu
+          - arch: aarch64
+            chip: artpec8
+    env:
+      EXREPO: acap-native-examples
+      EXNAME: vdo-larod
+      EAPNAME: vdo_larod
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build ${{ env.example }} application
+        env:
+          example: ${{ env.EXNAME }}-${{ matrix.chip }}
+          imagetag: ${{ env.EXREPO }}_${{ env.EXNAME }}-${{ matrix.chip }}:1.0
+          eapfile: ${{ env.EAPNAME }}_${{ matrix.chip }}_1_0_0_${{ matrix.arch }}.eap
+        run: |
+          docker image rm -f $imagetag
+          cd $EXNAME
+          cp app/manifest.json.${{ matrix.chip }} app/manifest.json
+          docker build --no-cache --build-arg CHIP=${{ matrix.chip }} --build-arg ARCH=${{ matrix.arch }} --tag $imagetag .
+          docker cp $(docker create $imagetag):/opt/app ./build_${{ matrix.chip }}
+          cd ..
+          docker image rm -f $imagetag
