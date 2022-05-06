@@ -203,8 +203,10 @@ RUN cmake -D CMAKE_TOOLCHAIN_FILE=../platforms/linux/arm-gnueabi.toolchain.cmake
           -D WITH_AXIS_VDO=ON \
           -D CMAKE_SKIP_RPATH=ON \
           -D OPENCV_GENERATE_PKGCONFIG=ON \
+
           # ON end.
           -D WITH_OPENEXR=OFF \
+          -D WITH_LAPACK=OFF \
           -D WITH_IPP=OFF \
           -D WITH_WEBP=OFF                  \
           -D ENABLE_PRECOMPILED_HEADERS=OFF \
@@ -249,7 +251,7 @@ RUN rm -rf $TARGET_ROOT/build
 # the path specified in CMAKE params
 WORKDIR $TARGET_ROOT/usr/include
 RUN ln -sf opencv4/opencv2 opencv2
-
+RUN ls -r /target-root/usr/include/opencv4/opencv2
 
 # Package all compiled packages to their SDK directories
 FROM ubuntu:${UBUNTU_VERSION} AS packages
@@ -258,7 +260,8 @@ ARG TARGET_ROOT
 RUN mkdir -p $SDK_ROOT_DIR
 COPY --from=build-openblas $TARGET_ROOT $SDK_ROOT_DIR/openblas
 COPY --from=build-opencv $TARGET_ROOT $SDK_ROOT_DIR/opencv
-
+RUN echo "Check here"
+RUN  find / -name imgproc.hpp
 
 
 # Package the "devel"-tagged image and prune some unneeded files
@@ -280,6 +283,7 @@ WORKDIR $SDK_ROOT_DIR
 # Prune runtime unrelated files
 RUN find */usr/* -maxdepth 0 -type d -not -name 'bin' -and -not -name 'lib' -and -not -name 'sbin' -exec rm -rf {} \;
 RUN find * -type f -name "*.a" -exec rm -f {} \;
+
 
 # Minimal container for the devel-tagged SDK
 FROM build-base AS sdk-devel
@@ -375,8 +379,16 @@ RUN cp -r /axis/opencv/usr/ /
 
 RUN mkdir $TARGET_ROOT/
 RUN mkdir $TARGET_ROOT/usr
+
 RUN cp -r /axis/opencv/usr/ $TARGET_ROOT/
+COPY --from=packages /axis/opencv/usr/include/ /target-root/usr/include/
+COPY --from=packages /axis/opencv/usr/lib/ /target-root/usr/lib/
+# /usr/include , /usr/lib 
+
 RUN  find / | grep "libopencv_core.so"
+RUN  find / -name imgproc.hpp
+RUN echo "Hellooo"
+RUN ls  /target-root/usr/lib
 COPY app/ /opt/app
 WORKDIR /opt/app
 RUN . /opt/axis/acapsdk/environment-setup* && acap-build .
