@@ -16,11 +16,14 @@ SDK_TARGET_LIBS=$(TARGET_ROOT)/usr/lib
 SHLIB_DIR = ./lib
 
 LDFLAGS = -L$(SHLIB_DIR) -Wl,--no-as-needed,-rpath,'$$ORIGIN/lib'
-SHLIBS += -lm -lopencv_video -lopencv_imgproc -lopencv_core -lpthread
+SHLIBS += -lm   -lopencv_calib3d -lopencv_features2d -lopencv_flann  -lopencv_video -lopencv_imgproc -lopencv_core -lpthread
 
-LIBCORE_FILES = $(wildcard $(SDK_TARGET_LIBS)/libopencv_core.so*)
-LIBPROC_FILES = $(wildcard $(SDK_TARGET_LIBS)/libopencv_imgproc.so*)
-LIBVIDEO_FILES = $(wildcard $(SDK_TARGET_LIBS)/libopencv_video.so*)
+LIBCORE_FILES = $(wildcard $(SDK_TARGET_LIBS)/libopencv_*.so*)
+
+#LIBPROC_FILES = $(wildcard $(SDK_TARGET_LIBS)/libopencv_imgproc.so*)
+#LIBVIDEO_FILES = $(wildcard $(SDK_TARGET_LIBS)/libopencv_video.so*)
+#LIBFEATURE2D_FILES = $(wildcard $(SDK_TARGET_LIBS)/libopencv_features2d.so*)
+
 
 .PHONY: all clean
 
@@ -32,8 +35,10 @@ $(TARGET): $(OBJECTS) libscopy
 libscopy:
 	mkdir -p $(SHLIB_DIR)
 	cp $(LIBCORE_FILES) $(SHLIB_DIR)
-	cp $(LIBPROC_FILES) $(SHLIB_DIR)
-	cp $(LIBVIDEO_FILES) $(SHLIB_DIR)
+
+#	cp $(LIBPROC_FILES) $(SHLIB_DIR)
+#	cp $(LIBVIDEO_FILES) $(SHLIB_DIR)
+#	cp $(LIBFEATURE2D_FILES) $(SHLIB_DIR)
 
 clean:
 	$(RM) *.o $(TARGET)
